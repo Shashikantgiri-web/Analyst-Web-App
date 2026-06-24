@@ -34,7 +34,7 @@ for sheet_name, df in excel_file.items():
     table_name = (
         sheet_name.strip()
         .lower()
-        .replace(" ", "_")
+        .replace(" ", "_")  
         .replace("-", "_")
     )
 
@@ -50,5 +50,4 @@ for sheet_name, df in excel_file.items():
     )
 
     print(f"✅ {table_name} imported successfully")
-
 print("\n🎉 All sheets imported successfully!")
