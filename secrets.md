@@ -4,3 +4,34 @@ DATABASE_URL="postgresql://postgres.bigstuotuzbrhjmdyuwl:Web_App@1234@aws-1-ap-s
 
 # Connect to Postgres via the shared session-mode pooler (used for migrations)
 DIRECT_URL="postgresql://postgres.bigstuotuzbrhjmdyuwl:Web_App@1234@aws-1-ap-south-1.pooler.supabase.com:5432/postgres"
+
+
+app flow 
+```
+                         PRD
+                          │
+        ┌─────────────────┼─────────────────┐
+        │                 │                 │
+        ▼                 ▼                 ▼
+ Technology        Database Design     Functional Spec
+        │                 │                 │
+        └──────────────┬──┴──────────────┐
+                       ▼                 ▼
+              Project Structure   API Architecture
+                       │                 │
+                       └──────────┬──────┘
+                                  ▼
+                          AI Architecture
+                                  │
+        ┌─────────────────────────┼─────────────────────────┐
+        ▼                         ▼                         ▼
+ Login Dashboard         CEO Dashboard            Manager Dashboard
+        ▼                         ▼                         ▼
+ Employee Dashboard      Tester Dashboard         QA & Deployment
+                                  │
+                                  ▼
+                        Coding Standards
+                                  │
+                                  ▼
+                        Development Roadmap
+```
