@@ -1,9 +1,9 @@
-Databasic-Passwords:Web_App@1234
+Databasic-Passwords:web-app-0987
 # Connect to Postgres via the shared transaction-mode pooler (IPv4-only)
-DATABASE_URL="postgresql://postgres.bigstuotuzbrhjmdyuwl:Web_App@1234@aws-1-ap-south-1.pooler.supabase.com:6543/postgres?pgbouncer=true"
+DATABASE_URL="postgresql://postgres.bigstuotuzbrhjmdyuwl:web-app-0987@aws-1-ap-south-1.pooler.supabase.com:6543/postgres?pgbouncer=true"
 
 # Connect to Postgres via the shared session-mode pooler (used for migrations)
-DIRECT_URL="postgresql://postgres.bigstuotuzbrhjmdyuwl:Web_App@1234@aws-1-ap-south-1.pooler.supabase.com:5432/postgres"
+DIRECT_URL="postgresql://postgres.bigstuotuzbrhjmdyuwl:web-app-0987@aws-1-ap-south-1.pooler.supabase.com:5432/postgres"
 
 ---
 
@@ -36,13 +36,13 @@ SUPABASE_JWKS_URL="https://cwzrtlqcuvigboblsusw.supabase.co/auth/v1/.well-known/
 Use these credentials when connecting directly to the PostgreSQL database (pgAdmin, DBeaver, VS Code extensions, etc.).
 
 ```text
-Connection String = "postgresql://postgres:Web_App@1234@db.cwzrtlqcuvigboblsusw.supabase.co:5432/postgres "
+Connection String = "postgresql://postgres:web-app-0987@db.cwzrtlqcuvigboblsusw.supabase.co:5432/postgres "
 
 Host     = "db.cwzrtlqcuvigboblsusw.supabase.co"
 Port     = "5432"
 Database = "postgres"
 User     = "postgres"
-Password = "Web_App@1234"
+Password = "web-app-0987"
 ```
 
 ---
@@ -55,7 +55,7 @@ Used by the application for normal database queries.
 
 ```env
 Connect to Postgres via the shared transaction-mode pooler (IPv4-only)
-DATABASE_URL="postgresql://postgres.bigstuotuzbrhjmdyuwl:Web_App@1234@aws-1-ap-south-1.pooler.supabase.com:6543/postgres?pgbouncer=true"
+DATABASE_URL="postgresql://postgres.bigstuotuzbrhjmdyuwl:web-app-0987@aws-1-ap-south-1.pooler.supabase.com:6543/postgres?pgbouncer=true"
 ```
 
 ---
@@ -67,13 +67,13 @@ Used for database migrations.
 
 ```env
 Connect to Postgres via the shared session-mode pooler (used for migrations)
-DIRECT_URL="postgresql://postgres.bigstuotuzbrhjmdyuwl:Web_App@1234@aws-1-ap-south-1.pooler.supabase.com:5432/postgres"
+DIRECT_URL="postgresql://postgres.bigstuotuzbrhjmdyuwl:web-app-0987@aws-1-ap-south-1.pooler.supabase.com:5432/postgres"
 
 Host     = "aws-0-ap-northeast-1.pooler.supabase.com"
 Port     = "5432"
 Database = "postgres"
 User     = "postgres.cwzrtlqcuvigboblsusw"
-Password = "Web_App@1234"
+Password = "web-app-0987"
 ```
 ---
 
@@ -84,13 +84,13 @@ Ideal for stateless applications like serverless functions where each interactio
 
 ```env
 Connect to Postgres via the shared session-mode pooler (used for migrations)
-DIRECT_URL="postgresql://postgres.cwzrtlqcuvigboblsusw:Web_App@1234@aws-0-ap-northeast-1.pooler.supabase.com:6543/postgres"
+DIRECT_URL="postgresql://postgres.cwzrtlqcuvigboblsusw:web-app-0987@aws-0-ap-northeast-1.pooler.supabase.com:6543/postgres"
 
 Host     = "aws-0-ap-northeast-1.pooler.supabase.com"
 Port     = "6543"
 Database = "postgres
 User     = "postgres.cwzrtlqcuvigboblsusw"
-Password = "Web_App@1234"
+Password = "web-app-0987"
 ```
 ---
 
