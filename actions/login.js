@@ -6,9 +6,9 @@ import { loginSchema } from "@/utils/validation";
 import { ROLE_HOME_ROUTE } from "@/constants/roles";
 
 /**
- * Login server action. Verifies userId + email + password against
- * employee_accounts.password_hash (bcrypt) and, on success, issues our own
- * signed session cookie -- see lib/session.js. No Supabase Auth involved.
+ * Login server action. Verifies userId + email + password via Supabase Auth,
+ * cross-checks employee_accounts, and on success issues our own
+ * signed session cookie -- see lib/session.js.
  */
 export async function loginAction(_prevState, formData) {
   const parsed = loginSchema.safeParse({
