@@ -1,0 +1,29 @@
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap");
+@import "tailwindcss";
+
+:root {
+  --background: #f5f7fa;
+  --foreground: #1a2332;
+
+  /* Enterprise Dark design system -- see 02_Design.md / constants/theme.js */
+  --navy-dark: #1a2332;
+  --navy-light: #2a3441;
+  --orange: #ff6b35;
+  --gray-workspace: #f5f7fa;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-navy-dark: var(--navy-dark);
+  --color-navy-light: var(--navy-light);
+  --color-orange: var(--orange);
+  --color-gray-workspace: var(--gray-workspace);
+  --font-sans: "Plus Jakarta Sans", sans-serif;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
