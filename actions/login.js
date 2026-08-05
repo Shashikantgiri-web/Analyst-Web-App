@@ -1,16 +1,14 @@
 "use server";
 
-import { createClient } from "@/lib/supabase/server";
-import { resolveAccountForCurrentUser } from "@/services/auth.service";
+import { verifyCredentials } from "@/services/auth.service";
+import { createSession } from "@/lib/session";
 import { loginSchema } from "@/utils/validation";
 import { ROLE_HOME_ROUTE } from "@/constants/roles";
 
 /**
- * Login server action. Mirrors the logic in App_detail.md:
- *  1. Validate input (never trust the client).
- *  2. Authenticate against Supabase Auth (email + password).
- *  3. Cross-check the employee_accounts ("access") table for userId + email
- *     + role. No match at any step -> "User not found/Unauthorized."
+ * Login server action. Verifies userId + email + password against
+ * employee_accounts.password_hash (bcrypt) and, on success, issues our own
+ * signed session cookie -- see lib/session.js. No Supabase Auth involved.
  */
 export async function loginAction(_prevState, formData) {
   const parsed = loginSchema.safeParse({
@@ -27,29 +25,22 @@ export async function loginAction(_prevState, formData) {
   }
 
   const { userId, email, password } = parsed.data;
-  const supabase = await createClient();
-
-  const { error: authError } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
-
-  if (authError) {
-    // Deliberately generic — never reveal whether the email exists.
-    return { ok: false, message: "User not found/Unauthorized." };
-  }
-
-  const result = await resolveAccountForCurrentUser({ userId, email });
+  const result = await verifyCredentials({ userId, email, password });
 
   if (result.status !== "ok") {
-    await supabase.auth.signOut();
     return { ok: false, message: "User not found/Unauthorized." };
   }
+
+  await createSession({
+    accountId: result.accountId,
+    employeeId: result.employeeId,
+    departmentId: result.departmentId,
+    role: result.role,
+  });
 
   return {
     ok: true,
     role: result.role,
-    employeeId: result.employeeId,
     redirectTo: ROLE_HOME_ROUTE[result.role] ?? "/login",
   };
 }

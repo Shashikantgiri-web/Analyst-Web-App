@@ -1,6 +1,5 @@
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
-import { resolveAccountForCurrentUser } from "@/services/auth.service";
+import { getSession } from "@/lib/session";
 import { ROLES } from "@/constants/roles";
 
 export async function generateMetadata({ params }) {
@@ -10,25 +9,14 @@ export async function generateMetadata({ params }) {
 
 export default async function ManagerDepartmentPage({ params }) {
   const { slug } = await params;
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const session = await getSession();
 
-  if (!user) redirect("/login");
-
-  const result = await resolveAccountForCurrentUser({
-    userId: null,
-    email: user.email,
-  });
-
-  if (result.status !== "ok" || result.role !== ROLES.MANAGER) {
+  if (!session || session.role !== ROLES.MANAGER) {
     redirect("/login");
   }
 
-  // Phase 2 will verify `slug` actually matches this manager's own
-  // department (via employees.department_id) before rendering any data —
-  // RLS already blocks cross-department reads at the query level.
+  // Phase 2 will verify `slug` matches session.departmentId before
+  // rendering any data.
 
   return (
     <main className="p-8">

@@ -1,27 +1,17 @@
 import "server-only";
-import { createClient } from "@/lib/supabase/server";
+import bcrypt from "bcryptjs";
+import { createAdminClient } from "@/lib/supabase/server";
 
 /**
- * Resolves the signed-in Supabase Auth user to an application role by
- * reading the employee_accounts ("access") table, per App_detail.md:
- *   1. Look up the account by employee_code (userId) + email.
- *   2. Confirm the role (CEO / Manager / Employee / Tester).
- *   3. If no matching, active account exists, the caller is unauthorized.
- *
- * RLS on employee_accounts restricts each row to its own auth_user_id,
- * so this can only ever resolve the caller's own account — it cannot be
- * used to probe other users' roles.
+ * Verifies userId + email + password against employee_accounts directly.
+ * This bypasses RLS by design (RLS is keyed on auth.uid(), which doesn't
+ * exist here since we're not using Supabase Auth) -- the service-role
+ * client is the ONLY place password_hash is ever read or compared. No
+ * other server code should import createAdminClient for anything except
+ * this login check.
  */
-export async function resolveAccountForCurrentUser({ userId, email }) {
-  const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return { status: "unauthorized", reason: "No active session." };
-  }
+export async function verifyCredentials({ userId, email, password }) {
+  const supabase = createAdminClient();
 
   const { data: account, error } = await supabase
     .from("employee_accounts")
@@ -29,33 +19,52 @@ export async function resolveAccountForCurrentUser({ userId, email }) {
       `
       id,
       employee_id,
-      username,
+      department_id,
       email,
+      password_hash,
       is_active,
       employees:employee_id ( employee_code ),
       roles:role_id ( name )
       `
     )
-    .eq("auth_user_id", user.id)
     .eq("email", email)
-    .single();
+    .maybeSingle();
 
   if (error || !account) {
-    return { status: "not_found", reason: "User not found/Unauthorized." };
+    return { status: "not_found" };
   }
 
   if (!account.is_active) {
-    return { status: "inactive", reason: "Account is disabled." };
+    return { status: "inactive" };
   }
 
   if (account.employees?.employee_code !== userId) {
-    return { status: "not_found", reason: "User not found/Unauthorized." };
+    return { status: "not_found" };
+  }
+
+  const passwordMatches = await bcrypt.compare(password, account.password_hash);
+  if (!passwordMatches) {
+    return { status: "not_found" }; // deliberately generic, don't leak which field was wrong
   }
 
   return {
     status: "ok",
-    role: account.roles?.name ?? null,
-    employeeId: account.employee_id,
     accountId: account.id,
+    employeeId: account.employee_id,
+    departmentId: account.department_id,
+    role: account.roles?.name ?? null,
   };
+}
+
+/** Reads back the current session's account, scoped to admin client (server-only). */
+export async function getAccountById(accountId) {
+  const supabase = createAdminClient();
+  const { data, error } = await supabase
+    .from("employee_accounts")
+    .select("id, employee_id, department_id, roles:role_id ( name )")
+    .eq("id", accountId)
+    .maybeSingle();
+
+  if (error || !data) return null;
+  return { ...data, role: data.roles?.name ?? null };
 }

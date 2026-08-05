@@ -1,6 +1,5 @@
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
-import { resolveAccountForCurrentUser } from "@/services/auth.service";
+import { getSession } from "@/lib/session";
 import { ROLES } from "@/constants/roles";
 
 export async function generateMetadata({ params }) {
@@ -10,19 +9,9 @@ export async function generateMetadata({ params }) {
 
 export default async function EmployeePage({ params }) {
   const { slug } = await params;
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const session = await getSession();
 
-  if (!user) redirect("/login");
-
-  const result = await resolveAccountForCurrentUser({
-    userId: null,
-    email: user.email,
-  });
-
-  if (result.status !== "ok" || result.role !== ROLES.EMPLOYEE) {
+  if (!session || session.role !== ROLES.EMPLOYEE) {
     redirect("/login");
   }
 

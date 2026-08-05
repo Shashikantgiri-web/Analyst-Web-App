@@ -1,0 +1,6 @@
+id,employee_id,username,email,password_hash,role_id,department_id,is_active,last_login
+93067db4-47f8-4928-8d80-162ac50cef1c,,shashikant,shashikant@analyst.com,$2b$12$XkwutSnaiJK87gWYlCBgVu4nadAMvYpl/ZnEvr.9UgNmJJULH41Oi,4138f45a-608b-4542-8286-ef2cd233608e,,True,
+21092d38-982e-4b20-891d-e4b2364295b2,,nishikant,nishikant@analyst.com,$2b$12$QQu86P9oI0RlkHOT2aklJOh6vnFmktB4d3b/D57QtoMVr6.OX9zdy,4138f45a-608b-4542-8286-ef2cd233608e,,True,
+5a8906c5-0dca-47a7-9953-60fceab7df89,,hr_manager,hr@analyst.com,$2b$12$n14GlRHCmc8FQCTeUiLEg.skAXIL/ktU6mzF6cJA2L5fC6kk5UOJO,b663f89e-9d7e-44c6-8db5-c7b1a2151a18,,True,
+d12e16bb-653e-4ad5-91d3-80c761b81894,,tester,tester@analyst.com,$2b$12$lwRJHCiBQvE5jJ8PTc0cWey3O9y9HLWDMi/okNhOITzo7SzT5A0f6,d4c4e121-21b7-42c4-8a38-ceb979e8afa4,,True,
+c995f0ca-af8c-4d94-a298-37a8092e75b8,,employee1,emp1@analyst.com,$2b$12$NU.4uQykcfuuu3qgCV5rS.hfVaQ3bSRyQd2hWqTwejPZp18iqZ0HG,e2b384b1-40d8-430d-9261-60459285b279,0770860a-2b58-4f69-aa68-d0cc7d7d3012,True,
