@@ -30,21 +30,37 @@ export async function verifyCredentials({ userId, email, password }) {
     .eq("email", email)
     .maybeSingle();
 
+  // --- TEMPORARY DIAGNOSTIC LOGGING: remove after debugging ---
+  console.log("LOGIN DEBUG:", {
+    inputUserId: userId,
+    inputUserIdType: typeof userId,
+    supabaseError: error,
+    accountFound: !!account,
+    accountIsActive: account?.is_active,
+    dbEmployeeCode: account?.employees?.employee_code,
+    dbEmployeeCodeType: typeof account?.employees?.employee_code,
+    codesMatch: account
+      ? String(account.employees?.employee_code) === String(userId)
+      : null,
+    hasPasswordHash: !!account?.password_hash,
+  });
+  // --- END TEMPORARY DIAGNOSTIC LOGGING ---
+
   if (error || !account) {
-    return { status: "not_found" };
+    return { status: "not_found", reason: "no_account_row" };
   }
 
   if (!account.is_active) {
-    return { status: "inactive" };
+    return { status: "inactive", reason: "account_inactive" };
   }
 
   if (String(account.employees?.employee_code) !== String(userId)) {
-    return { status: "not_found" };
+    return { status: "not_found", reason: "code_mismatch" };
   }
 
   const passwordMatches = await bcrypt.compare(password, account.password_hash);
   if (!passwordMatches) {
-    return { status: "not_found" }; // deliberately generic
+    return { status: "not_found", reason: "bad_password" };
   }
 
   return {
