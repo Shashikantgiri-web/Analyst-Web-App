@@ -34,7 +34,8 @@ export async function verifyCredentials({ userId, email, password }) {
   console.log("LOGIN DEBUG:", {
     inputUserId: userId,
     inputUserIdType: typeof userId,
-    supabaseError: error,
+    supabaseError: error?.message ?? null,
+    supabaseErrorDetails: error ?? null,
     accountFound: !!account,
     accountIsActive: account?.is_active,
     dbEmployeeCode: account?.employees?.employee_code,
@@ -47,7 +48,10 @@ export async function verifyCredentials({ userId, email, password }) {
   // --- END TEMPORARY DIAGNOSTIC LOGGING ---
 
   if (error || !account) {
-    return { status: "not_found", reason: "no_account_row" };
+    return {
+      status: "not_found",
+      reason: `no_account_row (${error?.message ?? "no error, just empty result"})`,
+    };
   }
 
   if (!account.is_active) {
