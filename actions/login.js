@@ -1,86 +1,51 @@
-import "server-only";
-import bcrypt from "bcryptjs";
-import { createAdminClient } from "@/lib/supabase/server";
+"use server";
+
+import { verifyCredentials } from "@/services/auth.service";
+import { createSession } from "@/lib/session";
+import { loginSchema } from "@/utils/validation";
+import { ROLE_HOME_ROUTE } from "@/constants/roles";
 
 /**
- * Verifies userId + email + password against employee_accounts directly.
- * This bypasses RLS by design (RLS is keyed on auth.uid(), which doesn't
- * exist here since we're not using Supabase Auth) -- the service-role
- * client is the ONLY place password_hash is ever read or compared. No
- * other server code should import createAdminClient for anything except
- * this login check.
+ * Login server action. Verifies userId + email + password via Supabase Auth,
+ * cross-checks employee_accounts, and on success issues our own
+ * signed session cookie -- see lib/session.js.
  */
-export async function verifyCredentials({ userId, email, password }) {
-  const supabase = createAdminClient();
-
-  const { data: account, error } = await supabase
-    .from("employee_accounts")
-    .select(
-      `
-      id,
-      employee_id,
-      department_id,
-      email,
-      password_hash,
-      is_active,
-      employees:employee_id ( employee_code ),
-      roles:role_id ( name )
-      `
-    )
-    .eq("email", email)
-    .maybeSingle();
-
-  // --- TEMPORARY DIAGNOSTIC LOGGING: remove after debugging ---
-  console.log("LOGIN DEBUG:", {
-    inputUserId: userId,
-    inputUserIdType: typeof userId,
-    supabaseError: error,
-    accountFound: !!account,
-    accountIsActive: account?.is_active,
-    dbEmployeeCode: account?.employees?.employee_code,
-    dbEmployeeCodeType: typeof account?.employees?.employee_code,
-    codesMatch: account
-      ? String(account.employees?.employee_code) === String(userId)
-      : null,
-    hasPasswordHash: !!account?.password_hash,
+export async function loginAction(_prevState, formData) {
+  const parsed = loginSchema.safeParse({
+    userId: formData.get("userId"),
+    email: formData.get("email"),
+    password: formData.get("password"),
   });
-  // --- END TEMPORARY DIAGNOSTIC LOGGING ---
 
-  if (error || !account) {
-    return { status: "not_found", reason: "no_account_row" };
+  if (!parsed.success) {
+    return {
+      ok: false,
+      message: parsed.error.issues[0]?.message ?? "Invalid input.",
+    };
   }
 
-  if (!account.is_active) {
-    return { status: "inactive", reason: "account_inactive" };
+  const { userId, email, password } = parsed.data;
+  const result = await verifyCredentials({ userId, email, password });
+
+  if (result.status !== "ok") {
+    // TEMPORARY: includes debug reason in the response. Remove before
+    // going back to production traffic -- this leaks auth internals.
+    return {
+      ok: false,
+      message: `User not found/Unauthorized. [debug: ${result.status} / ${result.reason}]`,
+    };
   }
 
-  if (String(account.employees?.employee_code) !== String(userId)) {
-    return { status: "not_found", reason: "code_mismatch" };
-  }
-
-  const passwordMatches = await bcrypt.compare(password, account.password_hash);
-  if (!passwordMatches) {
-    return { status: "not_found", reason: "bad_password" };
-  }
+  await createSession({
+    accountId: result.accountId,
+    employeeId: result.employeeId,
+    departmentId: result.departmentId,
+    role: result.role,
+  });
 
   return {
-    status: "ok",
-    accountId: account.id,
-    employeeId: account.employee_id,
-    departmentId: account.department_id,
-    role: account.roles?.name ?? null,
+    ok: true,
+    role: result.role,
+    redirectTo: ROLE_HOME_ROUTE[result.role] ?? "/login",
   };
-}
-
-/** Reads back the current session's account, scoped to admin client (server-only). */
-export async function getAccountById(accountId) {
-  const supabase = createAdminClient();
-  const { data, error } = await supabase
-    .from("employee_accounts")
-    .select("id, employee_id, department_id, roles:role_id ( name )")
-    .eq("id", accountId)
-    .maybeSingle();
-
-  if (error || !data) return null;
-  return { ...data, role: data.roles?.name ?? null };
 }
