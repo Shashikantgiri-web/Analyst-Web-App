@@ -1,58 +1,57 @@
 import "server-only";
-import { createClient, createAdminClient } from "@/lib/supabase/server";
+import bcrypt from "bcryptjs";
+import { createAdminClient } from "@/lib/supabase/server";
 
 /**
- * Verifies userId + email + password using Supabase Auth, then cross-checks
- * against the employee_accounts table for the role and active status.
+ * Verifies userId + email + password against employee_accounts directly.
+ * This bypasses RLS by design (RLS is keyed on auth.uid(), which doesn't
+ * exist here since we're not using Supabase Auth) -- the service-role
+ * client is the ONLY place password_hash is ever read or compared. No
+ * other server code should import createAdminClient for anything except
+ * this login check.
  */
 export async function verifyCredentials({ userId, email, password }) {
-  const supabase = await createClient();
-  const adminSupabase = createAdminClient();
+  const supabase = createAdminClient();
 
-  const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
-
-  if (authError || !authData.user) {
-    return { status: "not_found" };
-  }
-
-  const { data: account, error: accountError } = await adminSupabase
+  const { data: account, error } = await supabase
     .from("employee_accounts")
     .select(
       `
       id,
       employee_id,
+      department_id,
       email,
+      password_hash,
       is_active,
-      employees:employee_id ( employee_code, department_id ),
+      employees:employee_id ( employee_code ),
       roles:role_id ( name )
       `
     )
-    .eq("auth_user_id", authData.user.id)
+    .eq("email", email)
     .maybeSingle();
 
-  if (accountError || !account) {
-    await supabase.auth.signOut();
+  if (error || !account) {
     return { status: "not_found" };
   }
 
   if (!account.is_active) {
-    await supabase.auth.signOut();
     return { status: "inactive" };
   }
 
   if (account.employees?.employee_code !== userId) {
-    await supabase.auth.signOut();
     return { status: "not_found" };
+  }
+
+  const passwordMatches = await bcrypt.compare(password, account.password_hash);
+  if (!passwordMatches) {
+    return { status: "not_found" }; // deliberately generic
   }
 
   return {
     status: "ok",
     accountId: account.id,
     employeeId: account.employee_id,
-    departmentId: account.employees?.department_id,
+    departmentId: account.department_id,
     role: account.roles?.name ?? null,
   };
 }
@@ -62,14 +61,10 @@ export async function getAccountById(accountId) {
   const supabase = createAdminClient();
   const { data, error } = await supabase
     .from("employee_accounts")
-    .select("id, employee_id, employees:employee_id(department_id), roles:role_id ( name )")
+    .select("id, employee_id, department_id, roles:role_id ( name )")
     .eq("id", accountId)
     .maybeSingle();
 
   if (error || !data) return null;
-  return { 
-    ...data, 
-    department_id: data.employees?.department_id, 
-    role: data.roles?.name ?? null 
-  };
+  return { ...data, role: data.roles?.name ?? null };
 }
