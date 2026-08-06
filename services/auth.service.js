@@ -38,7 +38,7 @@ export async function verifyCredentials({ userId, email, password }) {
     return { status: "inactive" };
   }
 
-  if (account.employees?.employee_code !== userId) {
+  if (String(account.employees?.employee_code) !== String(userId)) {
     return { status: "not_found" };
   }
 
