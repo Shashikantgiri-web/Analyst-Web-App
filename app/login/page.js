@@ -2,7 +2,6 @@
 
 import { useActionState, useState } from "react";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 import { loginAction } from "@/actions/login";
 import { TextField } from "@/components/ui/text-field";
 import { Button } from "@/components/ui/button";
@@ -16,17 +15,18 @@ export default function LoginPage() {
     loginAction,
     initialState
   );
-  const [pendingRole, setPendingRole] = useState(null);
+  const [showTesterPicker, setShowTesterPicker] = useState(false);
 
-  // Once auth + access-table checks succeed, Manager and Tester roles need
-  // one more choice before we redirect (App_detail.md: "show a div box to
-  // select the department" / "select which role to test").
-  if (state.ok && !pendingRole) {
-    if (state.role === ROLES.MANAGER || state.role === ROLES.TESTER) {
-      setPendingRole(state);
+  // CEO, Manager, and Employee already have a fully resolved redirectTo
+  // from the server (Manager's department is looked up server-side now).
+  // Only Tester needs a client-side follow-up: which role to simulate.
+  if (state.ok && !showTesterPicker) {
+    if (state.role === ROLES.TESTER) {
+      setShowTesterPicker(true);
       return null;
     }
     router.push(state.redirectTo);
+    return null;
   }
 
   return (
@@ -39,13 +39,13 @@ export default function LoginPage() {
           </span>
         </div>
 
-        {!pendingRole ? (
+        {!showTesterPicker ? (
           <form action={formAction} className="flex flex-col gap-4">
             <TextField
               id="userId"
               name="userId"
               label="User ID"
-              placeholder="EMP-0001"
+              placeholder="65286"
               autoComplete="username"
             />
             <TextField
@@ -74,25 +74,16 @@ export default function LoginPage() {
             </Button>
           </form>
         ) : (
-          <RoleFollowUp state={pendingRole} />
+          <TesterRolePicker />
         )}
       </div>
     </div>
   );
 }
 
-function RoleFollowUp({ state }) {
+function TesterRolePicker() {
   const router = useRouter();
 
-  if (state.role === ROLES.MANAGER) {
-    return (
-      <DepartmentSelect
-        onSelect={(slug) => router.push(`/manage/${slug}`)}
-      />
-    );
-  }
-
-  // Tester: choose which role to simulate.
   return (
     <div className="flex flex-col gap-3">
       <p className="text-[14px] font-medium text-navy-dark">
@@ -108,44 +99,6 @@ function RoleFollowUp({ state }) {
           {slug.charAt(0).toUpperCase() + slug.slice(1)}
         </button>
       ))}
-    </div>
-  );
-}
-
-function DepartmentSelect({ onSelect }) {
-  const [slug, setSlug] = useState("");
-
-  // Department list is fetched from /manage server layer in Phase 2 —
-  // for Phase 1 this is a placeholder set covering the schema's scope.
-  const departments = [
-    { slug: "engineering", label: "Engineering" },
-    { slug: "sales", label: "Sales" },
-    { slug: "hr", label: "Human Resources" },
-    { slug: "finance", label: "Finance" },
-  ];
-
-  return (
-    <div className="flex flex-col gap-3">
-      <p className="text-[14px] font-medium text-navy-dark">
-        Select your department
-      </p>
-      <select
-        value={slug}
-        onChange={(e) => setSlug(e.target.value)}
-        className="h-11 rounded-lg border border-gray-300 bg-white px-3 text-[14px]"
-      >
-        <option value="" disabled>
-          Choose a department…
-        </option>
-        {departments.map((d) => (
-          <option key={d.slug} value={d.slug}>
-            {d.label}
-          </option>
-        ))}
-      </select>
-      <Button disabled={!slug} onClick={() => onSelect(slug)}>
-        Continue
-      </Button>
     </div>
   );
 }
