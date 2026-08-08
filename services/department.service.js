@@ -44,3 +44,20 @@ export async function getDepartmentIdForSlug(slug) {
 
   return match?.id ?? null;
 }
+
+/** All departments, for the Tester's manager-simulation picker. */
+export async function listDepartments() {
+  const supabase = createAdminClient();
+  const { data, error } = await supabase
+    .from("departments")
+    .select("id, department_code, department_name")
+    .order("department_name");
+
+  if (error || !data) return [];
+
+  return data.map((d) => ({
+    id: d.id,
+    name: d.department_name,
+    slug: d.department_code ? slugify(d.department_code) : slugify(d.department_name),
+  }));
+}
