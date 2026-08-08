@@ -6,7 +6,7 @@ export async function listEmployeesBasic() {
   const supabase = createAdminClient();
   const { data, error } = await supabase
     .from("employees")
-    .select("id, employee_code, first_name, last_name")
+    .select("id, employee_code, job_title")
     .order("employee_code")
     .limit(200);
 
@@ -15,6 +15,6 @@ export async function listEmployeesBasic() {
   return data.map((e) => ({
     id: e.id,
     employeeCode: e.employee_code,
-    name: `${e.first_name} ${e.last_name}`,
+    name: e.job_title ?? e.employee_code,
   }));
 }

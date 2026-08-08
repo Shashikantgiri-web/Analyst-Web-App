@@ -4,6 +4,7 @@ import { getDepartmentSlug } from "@/services/department.service";
 import { getManagerOverview } from "@/services/dashboard.service";
 import { ROLES } from "@/constants/roles";
 import { ManagerOverviewView } from "@/components/dashboards/manager-overview-view";
+import { DashboardTopBar } from "@/components/layout/dashboard-top-bar";
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;
@@ -27,14 +28,10 @@ export default async function ManagerDepartmentPage({ params }) {
 
   return (
     <main className="p-8 flex flex-col gap-8">
-      <div>
-        <h1 className="text-[30px] font-bold text-navy-dark">
-          {overview.department?.name ?? slug} · Manager Dashboard
-        </h1>
-        <p className="mt-1 text-[14px] text-gray-500">
-          Department-scoped performance overview.
-        </p>
-      </div>
+      <DashboardTopBar
+        title={`${overview.department?.name ?? slug} · Manager Dashboard`}
+        subtitle="Department-scoped performance overview."
+      />
       <ManagerOverviewView overview={overview} />
       <p className="text-[12px] text-gray-400">
         Department filters, salary/workload/promotion charts, and

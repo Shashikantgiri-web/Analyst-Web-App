@@ -28,6 +28,17 @@ export async function loginAction(_prevState, formData) {
   const { userId, email, password } = parsed.data;
   const result = await verifyCredentials({ userId, email, password });
 
+  if (result.status === "locked") {
+    const minsLeft = Math.max(
+      1,
+      Math.ceil((new Date(result.lockedUntil) - new Date()) / 60000)
+    );
+    return {
+      ok: false,
+      message: `Too many failed attempts. Try again in ${minsLeft} minute(s).`,
+    };
+  }
+
   if (result.status !== "ok") {
     return { ok: false, message: "User not found/Unauthorized." };
   }

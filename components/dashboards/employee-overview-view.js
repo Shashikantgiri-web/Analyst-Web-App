@@ -4,6 +4,9 @@ import { KpiCard } from "@/components/ui/kpi-card";
  * Presentational Employee dashboard body. Used by both /employee/[slug]
  * (the real employee's own data) and /test/employee (a Tester previewing
  * any employee) -- same data shape from getEmployeeOverview() either way.
+ *
+ * Note: the employees table has no first/last name columns -- employeeCode
+ * and jobTitle are the real identifying fields available.
  */
 export function EmployeeOverviewView({ overview }) {
   const { employee, metrics } = overview;
@@ -12,11 +15,11 @@ export function EmployeeOverviewView({ overview }) {
     <div className="flex flex-col gap-8">
       <div>
         <h1 className="text-[22px] font-bold text-navy-dark">
-          {employee?.firstName} {employee?.lastName}
+          {employee?.jobTitle ?? "Employee"} · {employee?.employeeCode}
         </h1>
         <p className="mt-1 text-[14px] text-gray-500">
-          {employee?.departmentName} · {employee?.employeeCode} ·{" "}
-          {employee?.yearsAtCompany} yrs at company
+          {employee?.departmentName} · {employee?.yearsAtCompany} yrs at
+          company
         </p>
       </div>
 

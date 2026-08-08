@@ -15,6 +15,7 @@ import { CeoOverviewView } from "@/components/dashboards/ceo-overview-view";
 import { ManagerOverviewView } from "@/components/dashboards/manager-overview-view";
 import { EmployeeOverviewView } from "@/components/dashboards/employee-overview-view";
 import { TestPicker } from "@/components/dashboards/test-picker";
+import { DashboardTopBar } from "@/components/layout/dashboard-top-bar";
 
 const VALID_TEST_ROLES = ["ceo", "manager", "employee"];
 
@@ -38,14 +39,10 @@ export default async function TestRolePage({ params, searchParams }) {
 
   return (
     <main className="p-8 flex flex-col gap-8">
-      <div>
-        <h1 className="text-[30px] font-bold text-navy-dark capitalize">
-          Simulating: {slug}
-        </h1>
-        <p className="mt-1 text-[14px] text-gray-500">
-          Testers get read access to all three dashboard tiers for QA.
-        </p>
-      </div>
+      <DashboardTopBar
+        title={`Simulating: ${slug}`}
+        subtitle="Testers get read access to all three dashboard tiers for QA."
+      />
 
       {slug === "ceo" && <CeoTestView />}
       {slug === "manager" && <ManagerTestView deptSlug={search?.dept} />}

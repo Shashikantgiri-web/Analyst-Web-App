@@ -8,8 +8,8 @@ export function EmployeeTable({ employees }) {
       <table className="w-full text-[13px]">
         <thead>
           <tr className="border-b border-gray-200 bg-gray-workspace text-left text-gray-500">
-            <th className="px-4 py-3 font-medium">Code</th>
-            <th className="px-4 py-3 font-medium">Name</th>
+            <th className="px-4 py-3 font-medium">Employee Code</th>
+            <th className="px-4 py-3 font-medium">Job Title</th>
             <th className="px-4 py-3 font-medium">Performance</th>
             <th className="px-4 py-3 font-medium">Salary</th>
             <th className="px-4 py-3 font-medium">Years</th>
@@ -19,9 +19,7 @@ export function EmployeeTable({ employees }) {
           {employees.map((emp) => (
             <tr key={emp.id} className="border-b border-gray-100 last:border-0">
               <td className="px-4 py-3 text-navy-dark">{emp.employeeCode}</td>
-              <td className="px-4 py-3 text-navy-dark">
-                {emp.firstName} {emp.lastName}
-              </td>
+              <td className="px-4 py-3 text-navy-dark">{emp.jobTitle ?? "—"}</td>
               <td className="px-4 py-3 text-navy-dark">
                 {emp.performanceScore?.toFixed(1) ?? "—"}
               </td>
