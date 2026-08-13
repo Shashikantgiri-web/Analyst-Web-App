@@ -3,13 +3,19 @@
 
 :root {
   --background: #f5f7fa;
-  --foreground: #1a2332;
+  --foreground: #111827;
 
-  /* Enterprise Dark design system -- see 02_Design.md / constants/theme.js */
+  /* Enterprise Dark design system v2 -- see 02_Design.md / constants/theme.js */
   --navy-dark: #1a2332;
   --navy-light: #2a3441;
   --orange: #ff6b35;
   --gray-workspace: #f5f7fa;
+  --success: #22c55e;
+  --warning: #facc15;
+  --danger: #ef4444;
+  --info: #3b82f6;
+  --border-color: #e5e7eb;
+  --text-secondary: #6b7280;
 }
 
 @theme inline {
@@ -19,6 +25,12 @@
   --color-navy-light: var(--navy-light);
   --color-orange: var(--orange);
   --color-gray-workspace: var(--gray-workspace);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --color-info: var(--info);
+  --color-border-color: var(--border-color);
+  --color-text-secondary: var(--text-secondary);
   --font-sans: "Plus Jakarta Sans", sans-serif;
 }
 

@@ -1,5 +1,17 @@
+import {
+  Users,
+  Building2,
+  TrendingUp,
+  Heart,
+  Award,
+  Wallet,
+  GraduationCap,
+  Clock,
+  Timer,
+} from "lucide-react";
 import { KpiCard } from "@/components/ui/kpi-card";
-import { RankingBarList } from "@/components/ui/ranking-bar-list";
+import { RankingBarChart } from "@/components/charts/ranking-bar-chart";
+import { DistributionDonutChart } from "@/components/charts/distribution-donut-chart";
 
 /**
  * Presentational CEO dashboard body. Used by both /ceo (the real CEO's
@@ -16,68 +28,37 @@ export function CeoOverviewView({ overview }) {
           Executive KPIs
         </h2>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-          <KpiCard label="Total Employees" value={kpis.totalEmployees} />
-          <KpiCard label="Total Departments" value={kpis.totalDepartments} />
-          <KpiCard
-            label="Avg Performance Score"
-            value={kpis.avgPerformanceScore}
-          />
-          <KpiCard
-            label="Avg Satisfaction Score"
-            value={kpis.avgSatisfactionScore}
-          />
-          <KpiCard
-            label="Promotion Rate"
-            value={kpis.promotionRate}
-            suffix="%"
-          />
-          <KpiCard
-            label="Avg Monthly Salary"
-            value={kpis.avgMonthlySalary}
-            suffix=" ₹"
-          />
-          <KpiCard label="Avg Training Hours" value={kpis.avgTrainingHours} />
-          <KpiCard
-            label="Avg Experience"
-            value={kpis.avgExperienceYears}
-            suffix=" yrs"
-          />
-          <KpiCard
-            label="Avg Work Hours/Week"
-            value={kpis.avgWorkHoursPerWeek}
-          />
+          <KpiCard icon={Users} label="Total Employees" value={kpis.totalEmployees} />
+          <KpiCard icon={Building2} label="Total Departments" value={kpis.totalDepartments} />
+          <KpiCard icon={TrendingUp} label="Avg Performance Score" value={kpis.avgPerformanceScore} />
+          <KpiCard icon={Heart} label="Avg Satisfaction Score" value={kpis.avgSatisfactionScore} />
+          <KpiCard icon={Award} label="Promotion Rate" value={kpis.promotionRate} suffix="%" />
+          <KpiCard icon={Wallet} label="Avg Monthly Salary" value={kpis.avgMonthlySalary} suffix=" ₹" />
+          <KpiCard icon={GraduationCap} label="Avg Training Hours" value={kpis.avgTrainingHours} />
+          <KpiCard icon={Clock} label="Avg Experience" value={kpis.avgExperienceYears} suffix=" yrs" />
+          <KpiCard icon={Timer} label="Avg Work Hours/Week" value={kpis.avgWorkHoursPerWeek} />
         </div>
       </section>
 
-      <section>
-        <h2 className="mb-3 text-[18px] font-semibold text-navy-dark">
-          Department Performance Ranking
-        </h2>
-        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-          <RankingBarList items={departmentRanking} valueLabel="pts" />
-        </div>
-      </section>
-
-      <section>
-        <h2 className="mb-3 text-[18px] font-semibold text-navy-dark">
-          Work-Life Balance Distribution
-        </h2>
-        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-          <div className="flex flex-wrap gap-4">
-            {Object.entries(workLifeBalanceDistribution).map(
-              ([label, count]) => (
-                <div
-                  key={label}
-                  className="rounded-lg bg-gray-workspace px-4 py-2 text-[13px]"
-                >
-                  <span className="font-semibold text-navy-dark">{label}</span>
-                  <span className="ml-2 text-gray-500">{count}</span>
-                </div>
-              )
-            )}
+      <div className="grid gap-8 lg:grid-cols-2">
+        <section>
+          <h2 className="mb-3 text-[18px] font-semibold text-navy-dark">
+            Department Performance Ranking
+          </h2>
+          <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+            <RankingBarChart items={departmentRanking} valueLabel="pts" />
           </div>
-        </div>
-      </section>
+        </section>
+
+        <section>
+          <h2 className="mb-3 text-[18px] font-semibold text-navy-dark">
+            Work-Life Balance Distribution
+          </h2>
+          <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+            <DistributionDonutChart distribution={workLifeBalanceDistribution} colorSeed={0} />
+          </div>
+        </section>
+      </div>
     </div>
   );
 }

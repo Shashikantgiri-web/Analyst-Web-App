@@ -1,3 +1,16 @@
+import {
+  TrendingUp,
+  Star,
+  Heart,
+  Smile,
+  Wallet,
+  GraduationCap,
+  Timer,
+  Briefcase,
+  Scale,
+  CalendarX,
+  Award,
+} from "lucide-react";
 import { KpiCard } from "@/components/ui/kpi-card";
 
 /**
@@ -14,10 +27,10 @@ export function EmployeeOverviewView({ overview }) {
   return (
     <div className="flex flex-col gap-8">
       <div>
-        <h1 className="text-[22px] font-bold text-navy-dark">
+        <h2 className="text-[18px] font-semibold text-navy-dark">
           {employee?.jobTitle ?? "Employee"} · {employee?.employeeCode}
-        </h1>
-        <p className="mt-1 text-[14px] text-gray-500">
+        </h2>
+        <p className="mt-1 text-[13px] text-gray-500">
           {employee?.departmentName} · {employee?.yearsAtCompany} yrs at
           company
         </p>
@@ -28,27 +41,17 @@ export function EmployeeOverviewView({ overview }) {
           Performance
         </h2>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-          <KpiCard
-            label="Performance Score"
-            value={metrics.performanceScore}
-          />
-          <KpiCard label="Rating" value={metrics.performanceRating} />
-          <KpiCard
-            label="Satisfaction Score"
-            value={metrics.satisfactionScore}
-          />
-          <KpiCard label="Satisfaction" value={metrics.satisfactionRating} />
-          <KpiCard
-            label="Monthly Salary"
-            value={metrics.monthlySalary}
-            suffix=" ₹"
-          />
-          <KpiCard label="Training Hours" value={metrics.trainingHours} />
-          <KpiCard label="Work Hours/Week" value={metrics.workHoursPerWeek} />
-          <KpiCard label="Projects Handled" value={metrics.projectsHandled} />
-          <KpiCard label="Work-Life Balance" value={metrics.workLifeBalance} />
-          <KpiCard label="Sick Days" value={metrics.sickDays} />
-          <KpiCard label="Promotions" value={metrics.promotions} />
+          <KpiCard icon={TrendingUp} label="Performance Score" value={metrics.performanceScore} />
+          <KpiCard icon={Star} label="Rating" value={metrics.performanceRating} />
+          <KpiCard icon={Heart} label="Satisfaction Score" value={metrics.satisfactionScore} />
+          <KpiCard icon={Smile} label="Satisfaction" value={metrics.satisfactionRating} />
+          <KpiCard icon={Wallet} label="Monthly Salary" value={metrics.monthlySalary} suffix=" ₹" />
+          <KpiCard icon={GraduationCap} label="Training Hours" value={metrics.trainingHours} />
+          <KpiCard icon={Timer} label="Work Hours/Week" value={metrics.workHoursPerWeek} />
+          <KpiCard icon={Briefcase} label="Projects Handled" value={metrics.projectsHandled} />
+          <KpiCard icon={Scale} label="Work-Life Balance" value={metrics.workLifeBalance} />
+          <KpiCard icon={CalendarX} label="Sick Days" value={metrics.sickDays} />
+          <KpiCard icon={Award} label="Promotions" value={metrics.promotions} />
         </div>
       </section>
     </div>

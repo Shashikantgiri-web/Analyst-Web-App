@@ -4,7 +4,7 @@ import { getDepartmentSlug } from "@/services/department.service";
 import { getManagerOverview } from "@/services/dashboard.service";
 import { ROLES } from "@/constants/roles";
 import { ManagerOverviewView } from "@/components/dashboards/manager-overview-view";
-import { DashboardTopBar } from "@/components/layout/dashboard-top-bar";
+import { AppShell } from "@/components/layout/app-shell";
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;
@@ -27,16 +27,16 @@ export default async function ManagerDepartmentPage({ params }) {
   const overview = await getManagerOverview(session.departmentId);
 
   return (
-    <main className="p-8 flex flex-col gap-8">
-      <DashboardTopBar
-        title={`${overview.department?.name ?? slug} · Manager Dashboard`}
-        subtitle="Department-scoped performance overview."
-      />
+    <AppShell
+      role={ROLES.MANAGER}
+      title={`${overview.department?.name ?? slug} · Manager Dashboard`}
+      subtitle="Department-scoped performance overview."
+    >
       <ManagerOverviewView overview={overview} />
       <p className="text-[12px] text-gray-400">
         Department filters, salary/workload/promotion charts, and
         demographics land in a later pass.
       </p>
-    </main>
+    </AppShell>
   );
 }
