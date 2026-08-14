@@ -16,17 +16,20 @@ import { EmployeeTable } from "@/components/ui/employee-table";
  * real manager's own department) and /test/manager (a Tester previewing
  * any department) -- same data shape from getManagerOverview() either way.
  *
- * Performance Rating Distribution and Work-Life Balance are independently
- * queried (see database/schema/004_dedupe_metrics_fix_fanout.sql) and
- * rendered with different colorSeed values here, so they can never again
- * silently look like duplicates of each other even if two categories
- * happen to share a count.
+ * Each distribution chart is independently queried in SQL (see
+ * database/schema/006_add_demographic_charts.sql) and rendered with a
+ * different colorSeed, so no two charts can ever again silently look
+ * like duplicates of each other.
  */
 export function ManagerOverviewView({ overview }) {
   const {
     kpis,
     workLifeBalanceDistribution,
     performanceRatingDistribution,
+    genderDistribution,
+    educationDistribution,
+    salaryDistribution,
+    workloadDistribution,
     employees,
   } = overview;
 
@@ -53,10 +56,7 @@ export function ManagerOverviewView({ overview }) {
             Performance Rating Distribution
           </h2>
           <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-            <DistributionDonutChart
-              distribution={performanceRatingDistribution}
-              colorSeed={0}
-            />
+            <DistributionDonutChart distribution={performanceRatingDistribution} colorSeed={0} />
           </div>
         </section>
 
@@ -65,10 +65,43 @@ export function ManagerOverviewView({ overview }) {
             Work-Life Balance
           </h2>
           <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-            <DistributionDonutChart
-              distribution={workLifeBalanceDistribution}
-              colorSeed={3}
-            />
+            <DistributionDonutChart distribution={workLifeBalanceDistribution} colorSeed={3} />
+          </div>
+        </section>
+
+        <section>
+          <h2 className="mb-3 text-[18px] font-semibold text-navy-dark">
+            Gender Distribution
+          </h2>
+          <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+            <DistributionDonutChart distribution={genderDistribution} colorSeed={2} />
+          </div>
+        </section>
+
+        <section>
+          <h2 className="mb-3 text-[18px] font-semibold text-navy-dark">
+            Education Level Distribution
+          </h2>
+          <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+            <DistributionDonutChart distribution={educationDistribution} colorSeed={4} />
+          </div>
+        </section>
+
+        <section>
+          <h2 className="mb-3 text-[18px] font-semibold text-navy-dark">
+            Salary Level Distribution
+          </h2>
+          <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+            <DistributionDonutChart distribution={salaryDistribution} colorSeed={1} />
+          </div>
+        </section>
+
+        <section>
+          <h2 className="mb-3 text-[18px] font-semibold text-navy-dark">
+            Workload Distribution
+          </h2>
+          <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+            <DistributionDonutChart distribution={workloadDistribution} colorSeed={5} />
           </div>
         </section>
       </div>

@@ -37,6 +37,9 @@ export async function getCeoOverview(departmentId = null) {
       promotionRate: data.promotionRate,
     },
     workLifeBalanceDistribution: data.workLifeBalanceDistribution ?? {},
+    genderDistribution: data.genderDistribution ?? {},
+    educationDistribution: data.educationDistribution ?? {},
+    salaryDistribution: data.salaryDistribution ?? {},
     departmentRanking: data.departmentRanking ?? [],
   };
 }

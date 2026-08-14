@@ -19,7 +19,14 @@ import { DistributionDonutChart } from "@/components/charts/distribution-donut-c
  * same data shape from getCeoOverview() either way.
  */
 export function CeoOverviewView({ overview }) {
-  const { kpis, workLifeBalanceDistribution, departmentRanking } = overview;
+  const {
+    kpis,
+    workLifeBalanceDistribution,
+    genderDistribution,
+    educationDistribution,
+    salaryDistribution,
+    departmentRanking,
+  } = overview;
 
   return (
     <div className="flex flex-col gap-8">
@@ -40,22 +47,49 @@ export function CeoOverviewView({ overview }) {
         </div>
       </section>
 
+      <section>
+        <h2 className="mb-3 text-[18px] font-semibold text-navy-dark">
+          Department Performance Ranking
+        </h2>
+        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+          <RankingBarChart items={departmentRanking} valueLabel="pts" />
+        </div>
+      </section>
+
       <div className="grid gap-8 lg:grid-cols-2">
         <section>
           <h2 className="mb-3 text-[18px] font-semibold text-navy-dark">
-            Department Performance Ranking
+            Work-Life Balance
           </h2>
           <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-            <RankingBarChart items={departmentRanking} valueLabel="pts" />
+            <DistributionDonutChart distribution={workLifeBalanceDistribution} colorSeed={0} />
           </div>
         </section>
 
         <section>
           <h2 className="mb-3 text-[18px] font-semibold text-navy-dark">
-            Work-Life Balance Distribution
+            Gender Distribution
           </h2>
           <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-            <DistributionDonutChart distribution={workLifeBalanceDistribution} colorSeed={0} />
+            <DistributionDonutChart distribution={genderDistribution} colorSeed={2} />
+          </div>
+        </section>
+
+        <section>
+          <h2 className="mb-3 text-[18px] font-semibold text-navy-dark">
+            Education Level Distribution
+          </h2>
+          <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+            <DistributionDonutChart distribution={educationDistribution} colorSeed={4} />
+          </div>
+        </section>
+
+        <section>
+          <h2 className="mb-3 text-[18px] font-semibold text-navy-dark">
+            Salary Level Distribution
+          </h2>
+          <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+            <DistributionDonutChart distribution={salaryDistribution} colorSeed={1} />
           </div>
         </section>
       </div>
