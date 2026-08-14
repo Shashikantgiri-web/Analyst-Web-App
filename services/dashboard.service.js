@@ -5,21 +5,25 @@ import { createAdminClient } from "@/lib/supabase/server";
 /**
  * CEO dashboard overview -- KPIs + department ranking + work-life balance
  * distribution, computed inside Postgres via ceo_dashboard_overview().
- * Cached 5 min since this doesn't need to be second-by-second live.
+ * Cached 5 min per filter value since this doesn't need to be
+ * second-by-second live. Pass departmentId to scope to one department
+ * (Global Filters, 06_CEO_Dashboard.md v2) -- omit for company-wide.
  */
-const getCachedCeoOverview = unstable_cache(
-  async () => {
-    const supabase = createAdminClient();
-    const { data, error } = await supabase.rpc("ceo_dashboard_overview");
-    if (error) throw error;
-    return data;
-  },
-  ["ceo-dashboard-overview"],
-  { revalidate: 300 }
-);
+export async function getCeoOverview(departmentId = null) {
+  const getCached = unstable_cache(
+    async () => {
+      const supabase = createAdminClient();
+      const { data, error } = await supabase.rpc("ceo_dashboard_overview", {
+        filter_department_id: departmentId,
+      });
+      if (error) throw error;
+      return data;
+    },
+    ["ceo-dashboard-overview", departmentId ?? "all"],
+    { revalidate: 300 }
+  );
 
-export async function getCeoOverview() {
-  const data = await getCachedCeoOverview();
+  const data = await getCached();
   return {
     kpis: {
       totalEmployees: data.totalEmployees,
