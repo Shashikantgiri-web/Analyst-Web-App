@@ -2,6 +2,7 @@
 
 import { useActionState, useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { loginAction } from "@/actions/login";
 import { TextField } from "@/components/ui/text-field";
 import { Button } from "@/components/ui/button";
@@ -33,7 +34,12 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-gray-workspace px-4">
       <div className="w-full max-w-sm rounded-xl border border-gray-200 bg-white p-8 shadow-sm">
         <div className="mb-6 flex items-center gap-2">
-          <div className="h-8 w-8 rounded-md bg-orange" />
+          <Image
+            src="/brand/logo-icon.png"
+            alt="Performance Analytics logo"
+            width={32}
+            height={32}
+          />
           <span className="text-[18px] font-bold text-navy-dark">
             Performance Analytics
           </span>

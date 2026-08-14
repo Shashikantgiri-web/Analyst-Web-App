@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -29,7 +30,12 @@ export function Sidebar({ role }) {
   return (
     <aside className="fixed left-0 top-0 z-20 flex h-screen w-64 flex-col bg-navy-dark text-white">
       <div className="flex h-16 items-center gap-2 px-6">
-        <div className="h-8 w-8 rounded-md bg-orange" />
+        <Image
+          src="/brand/logo-icon.png"
+          alt="Performance Analytics logo"
+          width={32}
+          height={32}
+        />
         <span className="text-[16px] font-bold">Performance Analytics</span>
       </div>
 

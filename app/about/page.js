@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export const metadata = {
   title: "About",
@@ -12,7 +13,12 @@ export default function AboutPage() {
     <div className="min-h-screen bg-gray-workspace px-4 py-16">
       <div className="mx-auto max-w-2xl">
         <div className="mb-8 flex items-center gap-2">
-          <div className="h-8 w-8 rounded-md bg-orange" />
+          <Image
+            src="/brand/logo-icon.png"
+            alt="Performance Analytics logo"
+            width={32}
+            height={32}
+          />
           <span className="text-[18px] font-bold text-navy-dark">
             Performance Analytics
           </span>
